@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QIS Department - Dashboard</title>
+    
+    <!-- Bootstrap 5 CDN -->
+    <link href="bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Header -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="index.html">
+                <span class="logo-icon">QIS</span>
+                Quality Inspection System
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="index.html">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="wirestandard.html">Wire Standard</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <div class="container">
+            <p class="hero-overline">Quality Inspection System</p>
+            <h1>Quality <span class="accent">Inspection</span><br>Department</h1>
+            <p class="lead mt-3">Sistem digitalisasi manajemen quality — terstruktur & efisien.</p>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container my-5">
+        <!-- Stats -->
+        <div class="row g-4 mb-5 mt-2">
+            <!-- <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="card-body">
+                        <div class="stat-icon">📊</div>
+                        <span class="stat-number">1,247</span>
+                        <p class="stat-label">Total Inspections</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="card-body">
+                        <div class="stat-icon">✅</div>
+                        <span class="stat-number">98.5%</span>
+                        <p class="stat-label">Pass Rate</p>
+                    </div>
+                </div>
+            </div> -->
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="card-body">
+                        <div class="stat-icon">📋</div>
+                        <span class="stat-number">19</span>
+                        <p class="stat-label">Active Standards</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="card-body">
+                        <div class="stat-icon">👥</div>
+                        <span class="stat-number">12</span>
+                        <p class="stat-label">Team Members</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features Section -->
+        <span class="section-eyebrow">Modul Sistem</span>
+        <h2 class="section-title">Fitur Utama</h2>
+        <div class="row g-4" id="features-container"></div>
+
+        <!-- Quick Access -->
+        <div class="mt-5">
+            <span class="section-eyebrow">Navigasi Cepat</span>
+            <h2 class="section-title">Akses Cepat</h2>
+            <div class="row g-3">
+                <div class="col-6 col-md-3">
+                    <a href="wirestandard-pdf.html" class="quick-link-btn">
+                        <div class="quick-icon">📄</div>
+                        <div class="quick-text">Wire Standard PDF</div>
+                    </a>
+                </div>
+                <div class="col-6 col-md-3">
+                    <a href="wirestandard.html" class="quick-link-btn">
+                        <div class="quick-icon">📋</div>
+                        <div class="quick-text">Wire Standards Table</div>
+                    </a>
+                </div>
+                <div class="col-6 col-md-3">
+                    <a href="#" class="quick-link-btn" onclick="alert('Coming Soon'); return false;">
+                        <div class="quick-icon">🌡️</div>
+                        <div class="quick-text">DF Temperature</div>
+                    </a>
+                </div>
+                <div class="col-6 col-md-3">
+                    <a href="#" class="quick-link-btn" onclick="alert('Coming Soon'); return false;">
+                        <div class="quick-icon">🧪</div>
+                        <div class="quick-text">General Tests</div>
+                    </a>
+                </div>
+                <div class="col-6 col-md-3">
+                    <a href="#" class="quick-link-btn" onclick="alert('Coming Soon'); return false;">
+                        <div class="quick-icon">📊</div>
+                        <div class="quick-text">Reports</div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="main-footer mt-5">
+        <div class="container">
+            <p>&copy; 2025 QIS Department — Cahyo Fajar Riyanto</p>
+            <small>Quality Inspection System v2.0</small>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JS -->
+    <script src="js/main.js"></script>
+</body>
+</html>
