@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QI Wire Standard Check — QIS Department</title>
+    <link href="bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <style>
+        /* =============================================
+           DESIGN TOKENS
+        ============================================= */
+        :root {
+            --white:       #ffffff;
+            --bg:          #f5f6f8;
+            --surface:     #ffffff;
+            --border:      #e4e7ec;
+            --border-mid:  #d0d5dd;
+
+            --blue:        #2563eb;
+            --blue-light:  #eff4ff;
+            --blue-mid:    #dbeafe;
+            --blue-dark:   #1e40af;
+
+            --text-dark:   #101828;
+            --text-mid:    #344054;
+            --text-soft:   #667085;
+            --text-faint:  #98a2b3;
+
+            --green:       #039855;
+            --green-bg:    #ecfdf3;
+            --amber:       #b54708;
+            --amber-bg:    #fffaeb;
+
+            --font:        'Plus Jakarta Sans', sans-serif;
+            --font-mono:   'JetBrains Mono', monospace;
+
+            --radius:      8px;
+            --radius-lg:   12px;
+            --shadow-sm:   0 1px 3px rgba(16,24,40,0.08), 0 1px 2px rgba(16,24,40,0.05);
+            --shadow-md:   0 4px 8px rgba(16,24,40,0.08), 0 2px 4px rgba(16,24,40,0.04);
+            --ease:        180ms ease;
+        }
+
+        /* =============================================
+           BASE
+        ============================================= */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text-dark);
+            font-size: 14px;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            height: 100vh;
+            overflow: hidden; /* Lock scroll — layout is full screen */
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* =============================================
+           NAVBAR
+        ============================================= */
+        .navbar {
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            padding: 0 24px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
+            box-shadow: var(--shadow-sm);
+            z-index: 10;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .logo-badge {
+            background: var(--blue);
+            color: white;
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            font-weight: 500;
+            padding: 4px 8px;
+            border-radius: 5px;
+            letter-spacing: 0.04em;
+        }
+
+        .brand-name {
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--text-dark);
+        }
+
+        .brand-sep {
+            color: var(--text-faint);
+            font-size: 0.8rem;
+            margin: 0 4px;
+        }
+
+        .brand-sub {
+            font-size: 0.82rem;
+            color: var(--text-soft);
+            font-weight: 500;
+        }
+
+        .doc-count {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--blue-light);
+            border: 1px solid var(--blue-mid);
+            color: var(--blue);
+            font-size: 0.76rem;
+            font-weight: 600;
+            padding: 5px 12px;
+            border-radius: 20px;
+        }
+
+        /* =============================================
+           MAIN LAYOUT — Sidebar + Viewer
+        ============================================= */
+        .app-body {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* =============================================
+           SIDEBAR
+        ============================================= */
+        .sidebar {
+            width: 300px;
+            flex-shrink: 0;
+            background: var(--white);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .sidebar-search {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+
+        .search-input {
+            width: 100%;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 8px 12px 8px 34px;
+            font-size: 0.82rem;
+            font-family: var(--font);
+            color: var(--text-dark);
+            outline: none;
+            transition: border-color var(--ease), box-shadow var(--ease);
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2398a2b3' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: 10px center;
+        }
+
+        .search-input:focus {
+            border-color: var(--blue);
+            box-shadow: 0 0 0 3px var(--blue-mid);
+            background-color: var(--white);
+        }
+
+        .search-input::placeholder { color: var(--text-faint); }
+
+        .sidebar-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px 0 16px;
+        }
+
+        .sidebar-list::-webkit-scrollbar { width: 4px; }
+        .sidebar-list::-webkit-scrollbar-track { background: transparent; }
+        .sidebar-list::-webkit-scrollbar-thumb { background: var(--border-mid); border-radius: 10px; }
+
+        /* Category group */
+        .doc-category {
+            padding: 16px 16px 6px;
+        }
+
+        .category-label {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 0.68rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-faint);
+            margin-bottom: 4px;
+        }
+
+        .category-label .cat-icon {
+            font-size: 0.85rem;
+        }
+
+        /* Document item */
+        .doc-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 9px 16px;
+            cursor: pointer;
+            transition: background var(--ease);
+            border-left: 2px solid transparent;
+            position: relative;
+        }
+
+        .doc-item:hover {
+            background: var(--bg);
+        }
+
+        .doc-item.active {
+            background: var(--blue-light);
+            border-left-color: var(--blue);
+        }
+
+        .doc-item-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .doc-item.active .doc-item-icon {
+            background: var(--blue-mid);
+        }
+
+        .doc-item:not(.active) .doc-item-icon {
+            background: var(--bg);
+        }
+
+        .doc-info { flex: 1; min-width: 0; }
+
+        .doc-name {
+            font-size: 0.83rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            line-height: 1.3;
+            margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .doc-item.active .doc-name { color: var(--blue); }
+
+        .doc-desc {
+            font-size: 0.74rem;
+            color: var(--text-faint);
+            line-height: 1.4;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* =============================================
+           PDF VIEWER PANEL
+        ============================================= */
+        .viewer-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background: var(--bg);
+        }
+
+        /* Viewer toolbar */
+        .viewer-toolbar {
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
+            gap: 12px;
+        }
+
+        .viewer-doc-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 0;
+        }
+
+        .viewer-doc-title .pdf-icon {
+            width: 28px;
+            height: 28px;
+            background: var(--blue-light);
+            border: 1px solid var(--blue-mid);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            flex-shrink: 0;
+        }
+
+        .title-text {
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .title-category {
+            font-size: 0.72rem;
+            color: var(--text-faint);
+        }
+
+        .viewer-actions {
+            display: flex;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .btn-toolbar {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-family: var(--font);
+            font-size: 0.78rem;
+            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            background: var(--white);
+            color: var(--text-mid);
+            cursor: pointer;
+            transition: all var(--ease);
+            text-decoration: none;
+        }
+
+        .btn-toolbar:hover {
+            background: var(--bg);
+            border-color: var(--border-mid);
+            color: var(--text-dark);
+        }
+
+        .btn-toolbar.primary {
+            background: var(--blue);
+            color: white;
+            border-color: var(--blue);
+        }
+
+        .btn-toolbar.primary:hover {
+            background: var(--blue-dark);
+            border-color: var(--blue-dark);
+            color: white;
+        }
+
+        /* PDF embed area */
+        .viewer-content {
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .pdf-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+        }
+
+        /* Empty / placeholder state */
+        .viewer-empty {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .empty-icon {
+            width: 64px;
+            height: 64px;
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .empty-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-mid);
+        }
+
+        .empty-sub {
+            font-size: 0.82rem;
+            color: var(--text-faint);
+        }
+
+        /* =============================================
+           HIDDEN item (search filter)
+        ============================================= */
+        .doc-item.hidden { display: none; }
+        .doc-category.hidden { display: none; }
+
+        /* =============================================
+           SCROLLBAR
+        ============================================= */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: var(--border-mid); border-radius: 10px; }
+
+        /* =============================================
+           RESPONSIVE — collapse sidebar on mobile
+        ============================================= */
+        @media (max-width: 768px) {
+            body { overflow: auto; height: auto; }
+            .app-body { flex-direction: column; overflow: visible; }
+            .sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--border); overflow: visible; }
+            .sidebar-list { max-height: 280px; }
+            .viewer-panel { height: 80vh; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <a class="navbar-brand" href="index.html">
+            <span class="logo-badge">QIS</span>
+            <span class="brand-name">Wire Standard</span>
+            <span class="brand-sep">/</span>
+            <span class="brand-sub">QI Document</span>
+        </a>
+        <div class="doc-count">
+            📄 16 Dokumen
+        </div>
+    </nav>
+
+    <!-- APP BODY -->
+    <div class="app-body">
+
+        <!-- =================== SIDEBAR =================== -->
+        <aside class="sidebar">
+
+            <!-- Search -->
+            <div class="sidebar-search">
+                <input
+                    type="text"
+                    class="search-input"
+                    id="searchInput"
+                    placeholder="Cari dokumen..."
+                    oninput="filterDocs(this.value)"
+                />
+            </div>
+
+            <!-- Document List -->
+            <div class="sidebar-list" id="docList">
+
+                <!-- ── DF Temperature ── -->
+                <div class="doc-category" id="cat-df">
+                    <div class="category-label">
+                        <span class="cat-icon">🌡️</span> DF Temperature Standards
+                    </div>
+                </div>
+                <!-- items injected by JS -->
+
+                <!-- ── General Tests ── -->
+                <div class="doc-category" id="cat-general">
+                    <div class="category-label">
+                        <span class="cat-icon">🧪</span> General Test Standards
+                    </div>
+                </div>
+
+                <!-- ── Resistance & Friction ── -->
+                <div class="doc-category" id="cat-resistance">
+                    <div class="category-label">
+                        <span class="cat-icon">⚡</span> Resistance & Friction Tests
+                    </div>
+                </div>
+
+                <!-- ── Softability & LM ── -->
+                <div class="doc-category" id="cat-soft">
+                    <div class="category-label">
+                        <span class="cat-icon">📐</span> Softability & LM Tests
+                    </div>
+                </div>
+
+            </div>
+        </aside>
+
+        <!-- =================== VIEWER =================== -->
+        <main class="viewer-panel">
+
+            <!-- Toolbar -->
+            <div class="viewer-toolbar" id="viewerToolbar" style="display:none;">
+                <div class="viewer-doc-title">
+                    <div class="pdf-icon">📄</div>
+                    <div>
+                        <div class="title-text" id="toolbarTitle">—</div>
+                        <div class="title-category" id="toolbarCategory">—</div>
+                    </div>
+                </div>
+                <div class="viewer-actions">
+                    <button class="btn-toolbar" onclick="printPDF()">🖨️ Print</button>
+                    <a class="btn-toolbar primary" id="downloadBtn" href="#" download target="_blank">📥 Download</a>
+                    <button class="btn-toolbar primary" onclick="openNewTab()">↗ Buka Tab Baru</button>
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="viewer-content">
+
+                <!-- Empty state -->
+                <div class="viewer-empty" id="viewerEmpty">
+                    <div class="empty-icon">📋</div>
+                    <div class="empty-title">Pilih dokumen untuk ditampilkan</div>
+                    <div class="empty-sub">Klik salah satu dokumen di panel kiri</div>
+                </div>
+
+                <!-- PDF iframe -->
+                <iframe class="pdf-iframe" id="pdfViewer" src="" style="display:none;"></iframe>
+
+            </div>
+        </main>
+
+    </div><!-- end app-body -->
+
+    <script src="bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+    // =============================================
+    // DATA — Edit di sini untuk tambah/hapus dokumen
+    // =============================================
+    const DOCS = [
+        // DF Temperature
+        { id: 1, cat: 'df',         catLabel: 'DF Temperature',       icon: '🔥', name: 'NMC DF Temp 250°',          desc: 'Standar temperatur DF 250° untuk NewMC',          file: './public/250_NewDF.pdf' },
+        { id: 2, cat: 'df',         catLabel: 'DF Temperature',       icon: '🌡️', name: 'OldMC DF Temp 250°',         desc: 'Standar temperatur DF 250° untuk OldMC',          file: './public/250_OldDF.pdf' },
+        { id: 3, cat: 'df',         catLabel: 'DF Temperature',       icon: '🌡️', name: 'OldMC DF Temp 280°',         desc: 'Standar temperatur DF 280° untuk OldMC',          file: './public/280_OldDF.pdf' },
+        { id: 4, cat: 'df',         catLabel: 'DF Temperature',       icon: '🔥', name: 'NewMC DF Temp 280 v1.81',   desc: 'Standar temperatur DF 280° versi 1.81 NewMC',    file: './public/280_NewDF.pdf' },
+
+        // General Tests
+        { id: 5, cat: 'general',    catLabel: 'General Test',         icon: '🧪', name: 'M-Tan',                     desc: 'Standar uji M-Tan untuk kawat',                  file: './public/Mtan.pdf' },
+        { id: 6, cat: 'general',    catLabel: 'General Test',         icon: '⚡', name: '80V Test',                  desc: 'Standar uji tegangan 80V',                       file: './public/80V.pdf' },
+        { id: 7, cat: 'general',    catLabel: 'General Test',         icon: '🔬', name: 'CT-1 Test',                 desc: 'Standar uji CT-1 untuk kawat',                   file: './public/CT-1.pdf' },
+        { id: 8, cat: 'general',    catLabel: 'General Test',         icon: '🔬', name: 'CT-3 Test',                 desc: 'Standar uji CT-3 untuk kawat',                   file: './public/CT-3.pdf' },
+
+        // Resistance & Friction
+        { id: 9,  cat: 'resistance', catLabel: 'Resistance & Friction', icon: '⚙️', name: 'Conductor Resistance',    desc: 'Standar uji resistansi konduktor',               file: './public/CR.pdf' },
+        { id: 10, cat: 'resistance', catLabel: 'Resistance & Friction', icon: '🔩', name: 'Friction Test',           desc: 'Standar uji friksi untuk kawat',                 file: './public/Friction.pdf' },
+        { id: 11, cat: 'resistance', catLabel: 'Resistance & Friction', icon: '📊', name: 'Scrape Average',          desc: 'Standar uji scrape rata-rata',                   file: './public/shScrape_max.pdf' },
+        { id: 12, cat: 'resistance', catLabel: 'Resistance & Friction', icon: '📉', name: 'Scrape Minimal',          desc: 'Standar uji scrape minimal',                     file: './public/shScrape_min.pdf' },
+
+        // Softability & LM
+        { id: 13, cat: 'soft',       catLabel: 'Softability & LM',    icon: '📐', name: 'Softability WireSize 8.50', desc: 'Standar softability wire size 8.50',             file: './public/shSoft_8.58.pdf' },
+        { id: 14, cat: 'soft',       catLabel: 'Softability & LM',    icon: '📐', name: 'Softability WireSize 0.70', desc: 'Standar softability wire size 0.70',             file: './public/shSoft_0.78.pdf' },
+        { id: 15, cat: 'soft',       catLabel: 'Softability & LM',    icon: '🧲', name: 'LM986 Test',               desc: 'Standar uji LM986 untuk kawat',                  file: './public/LM986.pdf' },
+        { id: 16, cat: 'soft',       catLabel: 'Softability & LM',    icon: '🧲', name: 'LM400 Test',               desc: 'Standar uji LM400 untuk kawat',                  file: './public/LM480.pdf' },
+    ];
+
+    // Kategori → elemen container
+    const CAT_MAP = {
+        df:         document.getElementById('cat-df'),
+        general:    document.getElementById('cat-general'),
+        resistance: document.getElementById('cat-resistance'),
+        soft:       document.getElementById('cat-soft'),
+    };
+
+    let currentDocId = null;
+
+    // =============================================
+    // RENDER SIDEBAR
+    // =============================================
+    function renderDocs(docs) {
+        // Remove old items, keep category headers
+        document.querySelectorAll('.doc-item').forEach(el => el.remove());
+
+        const grouped = {};
+        docs.forEach(d => {
+            if (!grouped[d.cat]) grouped[d.cat] = [];
+            grouped[d.cat].push(d);
+        });
+
+        Object.keys(CAT_MAP).forEach(cat => {
+            const catEl = CAT_MAP[cat];
+            const items = grouped[cat] || [];
+
+            // Hide empty categories
+            catEl.classList.toggle('hidden', items.length === 0);
+
+            items.forEach(doc => {
+                const el = document.createElement('div');
+                el.className = 'doc-item' + (doc.id === currentDocId ? ' active' : '');
+                el.dataset.id = doc.id;
+                el.innerHTML = `
+                    <div class="doc-item-icon">${doc.icon}</div>
+                    <div class="doc-info">
+                        <div class="doc-name">${doc.name}</div>
+                        <div class="doc-desc">${doc.desc}</div>
+                    </div>
+                `;
+                el.addEventListener('click', () => openDoc(doc));
+                catEl.after(el); // insert after category header
+                // re-order: insert before next category
+                catEl.parentNode.insertBefore(el, catEl.nextSibling);
+            });
+
+            // After all items inserted, shift them below the category header correctly
+        });
+    }
+
+    // =============================================
+    // OPEN DOCUMENT
+    // =============================================
+    function openDoc(doc) {
+        currentDocId = doc.id;
+
+        // Update active state
+        document.querySelectorAll('.doc-item').forEach(el => {
+            el.classList.toggle('active', parseInt(el.dataset.id) === doc.id);
+        });
+
+        // Show toolbar
+        const toolbar = document.getElementById('viewerToolbar');
+        toolbar.style.display = 'flex';
+        document.getElementById('toolbarTitle').textContent = doc.name;
+        document.getElementById('toolbarCategory').textContent = doc.catLabel;
+        document.getElementById('downloadBtn').href = doc.file;
+
+        // Show PDF
+        const iframe = document.getElementById('pdfViewer');
+        const empty  = document.getElementById('viewerEmpty');
+
+        empty.style.display  = 'none';
+        iframe.style.display = 'block';
+        iframe.src = doc.file + '#zoom=page-fit&toolbar=0&navpanes=0';
+
+        // Store for toolbar buttons
+        window._currentFile = doc.file;
+    }
+
+    // =============================================
+    // TOOLBAR ACTIONS
+    // =============================================
+    function openNewTab() {
+        if (window._currentFile) window.open(window._currentFile + '#zoom=145', '_blank');
+    }
+
+    function printPDF() {
+        const iframe = document.getElementById('pdfViewer');
+        try {
+            iframe.contentWindow.print();
+        } catch(e) {
+            // Cross-origin fallback
+            if (window._currentFile) window.open(window._currentFile, '_blank');
+        }
+    }
+
+    // =============================================
+    // SEARCH FILTER
+    // =============================================
+    function filterDocs(query) {
+        const q = query.toLowerCase().trim();
+        const filtered = q
+            ? DOCS.filter(d =>
+                d.name.toLowerCase().includes(q) ||
+                d.desc.toLowerCase().includes(q) ||
+                d.catLabel.toLowerCase().includes(q)
+              )
+            : DOCS;
+        renderDocs(filtered);
+    }
+
+    // =============================================
+    // INIT
+    // =============================================
+    (function init() {
+        renderDocs(DOCS);
+    })();
+    </script>
+
+</body>
+</html>#   q u a l i t y i n s p e c t i o n s y s t e m  
+ 
